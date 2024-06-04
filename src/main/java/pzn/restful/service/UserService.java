@@ -10,10 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import pzn.restful.entity.User;
 import pzn.restful.model.RegisterUserRequest;
+import pzn.restful.model.UpdateUserRequest;
 import pzn.restful.model.UserResponse;
 import pzn.restful.repository.UserRepository;
 import pzn.restful.security.BCrypt;
 
+import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -45,6 +47,30 @@ public class UserService {
         return UserResponse.builder()
                 .username(user.getUsername())
                 .name(user.getName())
+                .build();
+    }
+
+    @Transactional
+    public UserResponse update(User user, UpdateUserRequest request) {
+        validationService.validate(request);
+
+//        log.info("REQUEST : {}", request);
+
+        if (Objects.nonNull(request.getName())) {
+            user.setName(request.getName());
+        }
+
+        if (Objects.nonNull(request.getPassword())) {
+            user.setPassword(BCrypt.hashpw(request.getPassword(), BCrypt.gensalt()));
+        }
+
+        userRepository.save(user);
+
+//        log.info("USER : {}", user.getName());
+
+        return UserResponse.builder()
+                .name(user.getName())
+                .username(user.getUsername())
                 .build();
     }
 
