@@ -3,6 +3,7 @@ package pzn.restful.service;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Service
+@Slf4j
 public class UserService {
 
     @Autowired
@@ -54,7 +56,7 @@ public class UserService {
     public UserResponse update(User user, UpdateUserRequest request) {
         validationService.validate(request);
 
-//        log.info("REQUEST : {}", request);
+        log.info("REQUEST : {}", request);
 
         if (Objects.nonNull(request.getName())) {
             user.setName(request.getName());
@@ -66,7 +68,7 @@ public class UserService {
 
         userRepository.save(user);
 
-//        log.info("USER : {}", user.getName());
+        log.info("USER : {}", user.getName());
 
         return UserResponse.builder()
                 .name(user.getName())
